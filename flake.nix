@@ -25,6 +25,8 @@
       lib ? self.inputs.fnctl-lib.lib,
       modules ? [],
       stateVersion ? "22.05",
+      withDocs ? false,
+      withHomeManager ? true,
       hostName ? "fnctl",
       userName ? "developer",
       extraArgs ? {},
@@ -38,8 +40,15 @@
         specialArgs = extraArgs;
         # modules is the list of nixosModules that should be merged (in order).
         modules = lib.concatLists [
-          [
+          (lib.optionals withHomeManager [
             home-manager.nixosModules.home-manager
+            ({pkgs, ...}:
+              with lib; {
+                home-manager.useGlobalPkgs = true;
+                home-manager.useUserPackages = true;
+              })
+          ])
+          [
             ({pkgs, ...}:
               with lib; {
                 # use modern nix version and experimental-features
@@ -64,17 +73,15 @@
                 # other miscellaneous defaults ::
                 boot.loader.efi.canTouchEfiVariables = mkDefault true;
                 boot.loader.systemd-boot.enable = mkDefault true;
-                documentation.dev.enable = mkDefault false;
-                documentation.doc.enable = mkDefault false;
-                documentation.info.enable = mkDefault false;
-                documentation.man.enable = mkDefault false;
-                documentation.man.generateCaches = mkDefault false;
-                documentation.man.man-db.enable = mkDefault false;
-                documentation.nixos.enable = mkDefault false;
+                documentation.dev.enable = mkDefault withDocs;
+                documentation.doc.enable = mkDefault withDocs;
+                documentation.info.enable = mkDefault withDocs;
+                documentation.man.enable = mkDefault withDocs;
+                documentation.man.generateCaches = mkDefault withDocs;
+                documentation.man.man-db.enable = mkDefault withDocs;
+                documentation.nixos.enable = mkDefault withDocs;
                 environment.enableAllTerminfo = mkDefault true;
                 hardware.gpgSmartcards.enable = mkDefault true;
-                home-manager.useGlobalPkgs = true;
-                home-manager.useUserPackages = true;
                 i18n.defaultLocale = mkDefault "en_US.UTF-8";
                 nix.readOnlyStore = mkForce true;
                 nix.requireSignedBinaryCaches = mkForce true;
