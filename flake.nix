@@ -62,6 +62,8 @@
                 nix.gc.options = ''--max-freed "$((30 * 1024**3 - 1024 * $(df -P -k /nix/store | tail -n 1 | ${pkgs.gawk}/bin/awk '{ print $4 }')))"'';
 
                 # other miscellaneous defaults ::
+                boot.loader.efi.canTouchEfiVariables = mkDefault true;
+                boot.loader.systemd-boot.enable = mkDefault true;
                 documentation.dev.enable = mkDefault false;
                 documentation.doc.enable = mkDefault false;
                 documentation.info.enable = mkDefault false;
@@ -77,6 +79,7 @@
                 nix.readOnlyStore = mkForce true;
                 nix.requireSignedBinaryCaches = mkForce true;
                 nix.settings.auto-optimise-store = mkDefault true;
+                nix.useChroot = true;
                 nix.useSandbox = true;
                 programs.git.enable = mkDefault true;
                 programs.git.lfs.enable = mkDefault true;
@@ -118,8 +121,12 @@
                 systemd.enableUnifiedCgroupHierarchy = mkDefault true;
                 time.hardwareClockInLocalTime = mkDefault true;
                 time.timeZone = mkDefault "America/New_York";
+                users.allowNoPasswordLogin = mkDefault false;
                 users.defaultUserShell = pkgs.zsh;
                 users.enforceIdUniqueness = mkDefault true;
+                users.mutableUsers = mkDefault true;
+                users.users.root.initialPassword = mkDefault "b7c1421e-9922-451d-b4d9-ed64b469773b";
+                users.users.root.useDefaultUserShell = mkDefault true;
               })
           ]
           (lib.optionals (args ? "modules" && lib.isList args.modules) args.modules)

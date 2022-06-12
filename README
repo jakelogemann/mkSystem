@@ -1,0 +1,36 @@
+Start the REPL and load this flake.
+
+  ```
+  ➜ nix repl
+  Welcome to Nix 2.9.0. Type :? for help.
+
+  nix-repl> :lf .
+  Added 13 variables.
+
+  nix-repl> 
+  ```
+
+Define a new system's configuration
+
+  ```
+  nix-repl> sys = (mkSystem {})
+
+  ```
+
+Build a test VM!
+
+  ```
+  nix-repl> :b sys.config.system.build.vm
+
+  This derivation produced the following outputs:
+    out -> /nix/store/sk2hka3z57hqgx94zqgr53amwdsdays5-nixos-vm
+
+  nix-repl>
+  ```
+
+Test the new system
+
+  ```sh
+  /nix/store/sk2hka3z57hqgx94zqgr53amwdsdays5-nixos-vm/bin/run-fnctl-vm
+  ```
+
