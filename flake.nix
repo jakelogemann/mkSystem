@@ -126,7 +126,7 @@
                 users.enforceIdUniqueness = mkDefault true;
                 users.mutableUsers = mkDefault true;
                 users.users.root.initialPassword = mkDefault "b7c1421e-9922-451d-b4d9-ed64b469773b";
-                users.users.root.useDefaultUserShell = mkDefault true;
+                users.users.root.shell = mkDefault pkgs.zsh;
               })
           ]
           (lib.optionals (args ? "modules" && lib.isList args.modules) args.modules)
