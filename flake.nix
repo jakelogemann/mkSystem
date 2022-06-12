@@ -79,7 +79,6 @@
                 nix.readOnlyStore = mkForce true;
                 nix.requireSignedBinaryCaches = mkForce true;
                 nix.settings.auto-optimise-store = mkDefault true;
-                nix.useChroot = true;
                 nix.useSandbox = true;
                 programs.git.enable = mkDefault true;
                 programs.git.lfs.enable = mkDefault true;
@@ -126,7 +125,6 @@
                 users.enforceIdUniqueness = mkDefault true;
                 users.mutableUsers = mkDefault true;
                 users.users.root.initialPassword = mkDefault "b7c1421e-9922-451d-b4d9-ed64b469773b";
-                users.users.root.shell = mkDefault pkgs.zsh;
               })
           ]
           (lib.optionals (args ? "modules" && lib.isList args.modules) args.modules)
