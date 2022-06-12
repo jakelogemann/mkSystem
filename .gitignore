@@ -1,0 +1,7 @@
+public
+result
+.pre-commit-config.yaml
+.envrc
+.direnv
+gh-pages
+.DS_Store

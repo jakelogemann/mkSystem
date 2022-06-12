@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  workflow_dispatch:
+  workflow_call:
+  push: { branches: [main] }
+  pull_request:
+    branches: [main]
+    types:
+      - ready_for_review
+      - review_requested
+
+env:
+  IS_FORK: ${{ github.repository != 'fnctl/mkSystem' }}
+  IS_REMOTE: ${{ github.repository_owner != 'fnctl' }}
+
+jobs:
+
+  check:
+    runs-on: "ubuntu-latest"
+    steps:
+    - uses: actions/checkout@v3
+    - uses: cachix/install-nix-action@v17
+    - name: initialize checks.
+      run: |-
+        echo -e "\n# Checks\n\n"  >>$GITHUB_STEP_SUMMARY
+        echo -e "\n\n<details><summary><b>Inputs</b></summary>\n\n~~~json\n$(nix flake metadata --json 2>/dev/null | jq -Ser '.')\n~~~\n</details>\n" >>$GITHUB_STEP_SUMMARY
+        echo -e "\n\n<details><summary><b>Outputs</b></summary>\n\n~~~json\n$(nix flake show --json 2>/dev/null | jq -Ser '.')\n~~~\n</details>\n" >>$GITHUB_STEP_SUMMARY
+
+    - name: run checks
+      run: nix flake check --keep-going
+      continue-on-error: true
