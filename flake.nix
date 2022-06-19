@@ -60,18 +60,12 @@
                 # set the `NIX_PATH` so legacy nix commands use the same nixpkgs as
                 # the new commands.
                 nix.nixPath = mapAttrsToList (name: flake: "${name}=${flake}") self.inputs;
-                # seems like lots of things arent _really_ free :(
-                nixpkgs.config.allowUnfree = mkDefault true;
-                # set the system.stateVersion if it isn't set.
-                system.stateVersion = mkDefault stateVersion;
-                # set the hostname if it isn't set.
-                networking.hostName = mkDefault hostName;
-                nix.gc.automatic = true;
-                nix.gc.dates = "daily";
-                nix.gc.options = ''--max-freed "$((30 * 1024**3 - 1024 * $(df -P -k /nix/store | tail -n 1 | ${pkgs.gawk}/bin/awk '{ print $4 }')))"'';
-
-                # other miscellaneous defaults ::
+              })
+             # other miscellaneous defaults ::
+            ({pkgs, ...}:
+              with lib; {
                 boot.loader.efi.canTouchEfiVariables = mkDefault true;
+                boot.loader.grub.configurationLimit = mkDefault 10;
                 boot.loader.systemd-boot.enable = mkDefault true;
                 documentation.dev.enable = mkDefault withDocs;
                 documentation.doc.enable = mkDefault withDocs;
@@ -83,10 +77,16 @@
                 environment.enableAllTerminfo = mkDefault true;
                 hardware.gpgSmartcards.enable = mkDefault true;
                 i18n.defaultLocale = mkDefault "en_US.UTF-8";
+                networking.hostName = mkDefault hostName;
+                nix.gc.automatic = true;
+                nix.gc.dates = "daily";
+                nix.gc.options = ''--max-freed "$((30 * 1024**3 - 1024 * $(df -P -k /nix/store | tail -n 1 | ${pkgs.gawk}/bin/awk '{ print $4 }')))"'';
+                nix.optimise.automatic = mkDefault true;
                 nix.readOnlyStore = mkForce true;
                 nix.requireSignedBinaryCaches = mkForce true;
                 nix.settings.auto-optimise-store = mkDefault true;
                 nix.useSandbox = true;
+                nixpkgs.config.allowUnfree = mkDefault true;
                 programs.git.enable = mkDefault true;
                 programs.git.lfs.enable = mkDefault true;
                 programs.htop.enable = mkDefault true;
@@ -98,6 +98,10 @@
                 programs.neovim.withPython3 = mkDefault true;
                 programs.neovim.withRuby = mkDefault true;
                 programs.starship.enable = true;
+                programs.starship.settings.add_newline = true;
+                programs.starship.settings.character.error_symbol = "[➜](bold bright red)";
+                programs.starship.settings.character.success_symbol = "[➜](bold bright green)";
+                programs.starship.settings.scan_timeout = 10;
                 programs.zsh.autosuggestions.enable = mkDefault true;
                 programs.zsh.enable = mkDefault true;
                 programs.zsh.enableCompletion = mkDefault true;
@@ -122,6 +126,7 @@
                 sound.enable = mkDefault true;
                 sound.mediaKeys.enable = mkDefault true;
                 system.copySystemConfiguration = mkDefault false;
+                system.stateVersion = mkDefault stateVersion;
                 system.nixos.tags = ["fnctl"];
                 systemd.enableCgroupAccounting = mkDefault true;
                 systemd.enableUnifiedCgroupHierarchy = mkDefault true;
@@ -130,6 +135,7 @@
                 users.allowNoPasswordLogin = mkDefault false;
                 users.defaultUserShell = pkgs.zsh;
                 users.enforceIdUniqueness = mkDefault true;
+                users.groups.users = {};
                 users.mutableUsers = mkDefault true;
                 users.users.root.initialPassword = mkDefault "b7c1421e-9922-451d-b4d9-ed64b469773b";
               })
